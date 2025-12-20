@@ -1,0 +1,35 @@
+🏡 Casa Fácil – API Backend
+
+API REST desenvolvida para o projeto Casa Fácil, com foco em autenticação, gestão de usuários e operações internas do sistema.
+
+🚀 Tecnologias Utilizadas
+
+As principais tecnologias usadas na construção da API:
+
+Java 17
+
+Spring Boot 3.4
+
+Spring Security
+
+Spring Data JPA
+
+Maven
+
+Lombok
+
+H2 Database (ambiente de testes)
+
+Postman (testes de requisição)
+
+📌 Funcionalidades
+
+Registro e autenticação de usuários
+
+Login com geração de token JWT
+
+Controle de acesso por papéis (roles)
+
+CRUD de entidades internas da plataforma
+
+Banco de dados em memória (H2) para desenvolvimento

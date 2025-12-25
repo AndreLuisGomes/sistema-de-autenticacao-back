@@ -1,4 +1,4 @@
 package com.casafacil.casa_facil_api.dto;
 
-public record RegisterRequestDTO(String name, String email, String password) {
+public record RegisterRequestDTO(String name, String email, String password, String role) {
 }

@@ -1,4 +1,4 @@
 package com.casafacil.casa_facil_api.dto;
 
-public record ResponseDTO(String token, String name) {
+public record ResponseDTO(String token, String name, String role) {
 }

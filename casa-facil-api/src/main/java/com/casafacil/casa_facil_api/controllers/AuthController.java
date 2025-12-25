@@ -1,20 +1,22 @@
 package com.casafacil.casa_facil_api.controllers;
 
-import com.casafacil.casa_facil_api.domain.user.User;
-import com.casafacil.casa_facil_api.domain.user.UserDTO;
+import com.casafacil.casa_facil_api.domain.user.Owner;
+import com.casafacil.casa_facil_api.domain.user.Renter;
 import com.casafacil.casa_facil_api.dto.LoginRequestDTO;
 import com.casafacil.casa_facil_api.dto.RegisterRequestDTO;
 import com.casafacil.casa_facil_api.dto.ResponseDTO;
 import com.casafacil.casa_facil_api.infra.security.TokenService;
-import com.casafacil.casa_facil_api.repositories.UserRepository;
+import com.casafacil.casa_facil_api.services.OwnerService;
+import com.casafacil.casa_facil_api.services.RenterService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -22,42 +24,85 @@ import java.util.Optional;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final UserRepository userRepository;
+    private final OwnerService ownerService;
+    private final RenterService renterService;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody LoginRequestDTO body){
-        Optional<User> user = this.userRepository.findByEmail(body.email());
-        if(user.isEmpty()){
-            System.out.println("\n ================ Não existe usuário cadastrado com esse email! ===================\n");
-            return ResponseEntity.notFound().build();
+    public ResponseEntity login(@RequestBody LoginRequestDTO body) {
+
+        Optional<Owner> owner = this.ownerService.findOwnerByEmail(body.email());
+
+        if (owner.isPresent()) {
+            if (this.passwordEncoder.matches(body.password(), owner.get().getPassword())) {
+                String token = this.tokenService.generateToken(body.email());
+                return ResponseEntity.ok().body(new ResponseDTO(token, owner.get().getName(), owner.get().getRole()));
+            }
         }
-        if(passwordEncoder.matches(body.password(), user.get().getPassword())){
-            String token = this.tokenService.generateToken(user.get());
-            return ResponseEntity.ok(new ResponseDTO(token, user.get().getName()));
+
+        Optional<Renter> renter = this.renterService.findRenterByEmail(body.email());
+
+        if (renter.isPresent()) {
+            if (this.passwordEncoder.matches(body.password(), renter.get().getPassword())) {
+                String token = this.tokenService.generateToken(body.email());
+                return ResponseEntity.ok().body(new ResponseDTO(token, renter.get().getName(), renter.get().getRole()));
+            }
+        }else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        System.out.println("\n ================ Não existe usuário cadastrado com esse senha! ===================\n");
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok().build();
     }
+
+
+//        Optional<Owner> owner = this.userService.getOwner(body.email());
+//
+//        Optional<Renter> renter = this.userService.getRenter(body.email());
+//
+//        if(owner.isPresent()){
+//           if(passwordEncoder.matches(body.password(), owner.get().getPassword())){
+//               String token = this.tokenService.generateToken(body.email());
+//               List<Role> newRole = new ArrayList<>();
+//               newRole.add(new Role("owner"));
+//               return ResponseEntity.ok(new ResponseDTO(token, owner.get().getName(), newRole));
+//           }
+//        }
+//        if(renter.isPresent()){
+//            if(passwordEncoder.matches(body.password(), renter.get().getPassword())){
+//                String token = this.tokenService.generateToken(body.email());
+//                List<Role> newRole = new ArrayList<>();
+//                newRole.add(new Role("renter"));
+//                return ResponseEntity.ok(new ResponseDTO(token, renter.get().getName(), newRole));
+//            }
+//        }
+//        return ResponseEntity.notFound().build();
+
 
     @PostMapping("/register")
-    public ResponseEntity<Object> register(@RequestBody RegisterRequestDTO body){
-        Optional<User> user = this.userRepository.findByEmail(body.email());
-        if(user.isEmpty()){
-            User newUser = new User();
-            newUser.setPassword(this.passwordEncoder.encode(body.password()));
-            newUser.setName(body.name());
-            newUser.setEmail(body.email());
-            this.userRepository.save(newUser);
-            LoginRequestDTO bodyUser = new LoginRequestDTO(body.email(), body.password());
-            return this.login(bodyUser);
-        }
-        throw new ResponseStatusException(HttpStatus.CONFLICT, "Email em uso!");
-    }
+    public ResponseEntity register(@RequestBody RegisterRequestDTO body){
+        Optional<Owner> owner = this.ownerService.findOwnerByEmail(body.email());
+        Optional<Renter> renter = this.renterService.findRenterByEmail(body.email());
 
-//    @GetMapping("/user")
-//    public ResponseEntity<List<User>> getUsers(){
-//
-//    }
+        if(owner.isEmpty() && renter.isEmpty()){
+            if (body.role().equals("owner")) {
+                this.ownerService.saveOwner(body);
+            } else if(body.role().equals("renter")){
+                this.renterService.saveRenter(body);
+            }
+        }else{
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+        return ResponseEntity.ok().build();
+    }
 }
+//        Optional<User> user = this.userRepository.findByEmail(body.email());
+//        if(user.isEmpty()){
+//            System.out.println("\n ================ Não existe usuário cadastrado com esse email! ===================\n");
+//            return ResponseEntity.notFound().build();
+//        }
+//        if(passwordEncoder.matches(body.password(), user.get().getPassword())){
+//            String token = this.tokenService.generateToken(user.get());
+//            return ResponseEntity.ok(new ResponseDTO(token, user.get().getName(), ));
+//        }
+//        System.out.println("\n ================ Não existe usuário cadastrado com esse senha! ===================\n");
+//        return ResponseEntity.badRequest().build();

@@ -1,7 +1,9 @@
 package com.casafacil.casa_facil_api.infra.security;
 
-import com.casafacil.casa_facil_api.domain.user.User;
-import com.casafacil.casa_facil_api.repositories.UserRepository;
+import com.casafacil.casa_facil_api.domain.user.Owner;
+import com.casafacil.casa_facil_api.domain.user.Renter;
+import com.casafacil.casa_facil_api.repositories.OwnerRepository;
+import com.casafacil.casa_facil_api.repositories.RenterRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,15 +16,26 @@ import java.util.ArrayList;
 @AllArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private UserRepository userRepository;
+    private OwnerRepository ownerRepository;
+    private RenterRepository renterRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = this.userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found!"));
-        return org.springframework.security.core.userdetails.User.
-                withUsername(user.getEmail())
-                .password(user.getPassword())
-                .authorities( new ArrayList<>())
-                .build();
+        Owner owner = this.ownerRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found!"));
+        Renter renter = this.renterRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found!"));
+
+        if(owner.getEmail() != null){
+            return org.springframework.security.core.userdetails.User.
+                    withUsername(owner.getEmail())
+                    .password(owner.getPassword())
+                    .authorities( new ArrayList<>())
+                    .build();
+        }else {
+            return org.springframework.security.core.userdetails.User.
+                    withUsername(renter.getEmail())
+                    .password(renter.getPassword())
+                    .authorities( new ArrayList<>())
+                    .build();
+        }
     }
 }

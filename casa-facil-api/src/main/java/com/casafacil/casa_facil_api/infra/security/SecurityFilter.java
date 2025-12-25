@@ -1,12 +1,15 @@
 package com.casafacil.casa_facil_api.infra.security;
 
-import com.casafacil.casa_facil_api.domain.user.User;
-import com.casafacil.casa_facil_api.repositories.UserRepository;
+import com.casafacil.casa_facil_api.domain.user.Owner;
+import com.casafacil.casa_facil_api.domain.user.Renter;
+import com.casafacil.casa_facil_api.repositories.OwnerRepository;
+import com.casafacil.casa_facil_api.repositories.RenterRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,17 +28,26 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     private final TokenService tokenService;
 
-    private final UserRepository userRepository;
+    private final OwnerRepository ownerRepository;
+    private final RenterRepository renterRepository;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,@NonNull FilterChain filterChain) throws ServletException, IOException {
         var login = tokenService.validateToken(this.recoverToken(request));
 
         if(login != null){
-            User user = userRepository.findByEmail(login).orElseThrow(() -> new RuntimeException("User not found exception"));
-            List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
-            Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            Owner owner = ownerRepository.findByEmail(login).orElseThrow(() -> new RuntimeException("User not found exception"));
+            Renter renter = renterRepository.findByEmail(login).orElseThrow(()-> new RuntimeException("User not found exception"));
+
+            if(owner.getEmail() != null){
+                List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+                Authentication authentication = new UsernamePasswordAuthenticationToken(owner, null, authorities);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }else{
+                List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+                Authentication authentication = new UsernamePasswordAuthenticationToken(renter, null, authorities);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
         }
         filterChain.doFilter(request, response);
     }

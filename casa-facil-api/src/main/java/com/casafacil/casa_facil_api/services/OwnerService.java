@@ -4,6 +4,8 @@ import com.casafacil.casa_facil_api.domain.user.Owner;
 import com.casafacil.casa_facil_api.dto.RegisterRequestDTO;
 import com.casafacil.casa_facil_api.repositories.OwnerRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import java.util.Optional;
 public class OwnerService {
 
     private final OwnerRepository ownerRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public Optional<Owner> findOwnerByEmail(String email) {
         return this.ownerRepository.findByEmail(email);
@@ -24,7 +27,7 @@ public class OwnerService {
         owner.setName(request.name());
         owner.setEmail(request.email());
         owner.setRole(request.role());
-        owner.setPassword(request.password());
+        owner.setPassword(this.passwordEncoder.encode(request.password()));
         owner.setHousings(new ArrayList<>());
         this.ownerRepository.save(owner);
     }

@@ -32,6 +32,18 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody LoginRequestDTO body) {
 
+        Optional<Renter> renter = this.renterService.findRenterByEmail(body.email());
+        if(body.password() == null || body.email() == null){
+            System.out.println("Nulos");
+        }
+
+        if (renter.isPresent()) {
+            if (this.passwordEncoder.matches(body.password(), renter.get().getPassword())) {
+                String token = this.tokenService.generateToken(body.email());
+                return ResponseEntity.ok().body(new ResponseDTO(token, renter.get().getName(), renter.get().getRole()));
+            }
+        }
+
         Optional<Owner> owner = this.ownerService.findOwnerByEmail(body.email());
 
         if (owner.isPresent()) {
@@ -39,17 +51,8 @@ public class AuthController {
                 String token = this.tokenService.generateToken(body.email());
                 return ResponseEntity.ok().body(new ResponseDTO(token, owner.get().getName(), owner.get().getRole()));
             }
-        }
-
-        Optional<Renter> renter = this.renterService.findRenterByEmail(body.email());
-
-        if (renter.isPresent()) {
-            if (this.passwordEncoder.matches(body.password(), renter.get().getPassword())) {
-                String token = this.tokenService.generateToken(body.email());
-                return ResponseEntity.ok().body(new ResponseDTO(token, renter.get().getName(), renter.get().getRole()));
-            }
         }else{
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().build();
     }
@@ -89,10 +92,9 @@ public class AuthController {
             } else if(body.role().equals("renter")){
                 this.renterService.saveRenter(body);
             }
-        }else{
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            return ResponseEntity.ok().body(new ResponseDTO(this.tokenService.generateToken(body.email()), body.name(), body.role()));
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
 }
 //        Optional<User> user = this.userRepository.findByEmail(body.email());

@@ -1,6 +1,6 @@
 package com.casafacil.casa_facil_api.repositories;
 
-import com.casafacil.casa_facil_api.domain.user.Renter;
+import com.casafacil.casa_facil_api.models.renter.Renter;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

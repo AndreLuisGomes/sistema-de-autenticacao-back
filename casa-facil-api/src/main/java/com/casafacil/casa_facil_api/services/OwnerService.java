@@ -1,10 +1,9 @@
 package com.casafacil.casa_facil_api.services;
 
-import com.casafacil.casa_facil_api.domain.user.Owner;
+import com.casafacil.casa_facil_api.models.owner.Owner;
 import com.casafacil.casa_facil_api.dto.RegisterRequestDTO;
 import com.casafacil.casa_facil_api.repositories.OwnerRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

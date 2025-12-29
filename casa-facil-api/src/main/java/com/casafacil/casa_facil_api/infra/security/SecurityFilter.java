@@ -1,7 +1,7 @@
 package com.casafacil.casa_facil_api.infra.security;
 
-import com.casafacil.casa_facil_api.domain.user.Owner;
-import com.casafacil.casa_facil_api.domain.user.Renter;
+import com.casafacil.casa_facil_api.models.owner.Owner;
+import com.casafacil.casa_facil_api.models.renter.Renter;
 import com.casafacil.casa_facil_api.repositories.OwnerRepository;
 import com.casafacil.casa_facil_api.repositories.RenterRepository;
 import jakarta.servlet.FilterChain;

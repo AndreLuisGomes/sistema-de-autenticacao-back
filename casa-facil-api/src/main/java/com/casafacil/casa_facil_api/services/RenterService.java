@@ -1,6 +1,6 @@
 package com.casafacil.casa_facil_api.services;
 
-import com.casafacil.casa_facil_api.domain.user.Renter;
+import com.casafacil.casa_facil_api.models.renter.Renter;
 import com.casafacil.casa_facil_api.dto.RegisterRequestDTO;
 import com.casafacil.casa_facil_api.repositories.RenterRepository;
 import lombok.RequiredArgsConstructor;

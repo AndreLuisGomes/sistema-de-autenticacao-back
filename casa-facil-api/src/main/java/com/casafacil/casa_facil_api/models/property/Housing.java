@@ -1,4 +1,4 @@
-package com.casafacil.casa_facil_api.domain.property;
+package com.casafacil.casa_facil_api.models.property;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -22,6 +22,7 @@ public class Housing{
     @Column(name = "owner_id")
     private UUID ownerId;
 
-    private String address;
+    @Embedded
+    private Address address;
 
 }

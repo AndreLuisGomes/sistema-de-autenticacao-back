@@ -1,7 +1,7 @@
 package com.casafacil.casa_facil_api.controllers;
 
-import com.casafacil.casa_facil_api.domain.user.Owner;
-import com.casafacil.casa_facil_api.domain.user.Renter;
+import com.casafacil.casa_facil_api.models.owner.Owner;
+import com.casafacil.casa_facil_api.models.renter.Renter;
 import com.casafacil.casa_facil_api.dto.LoginRequestDTO;
 import com.casafacil.casa_facil_api.dto.RegisterRequestDTO;
 import com.casafacil.casa_facil_api.dto.ResponseDTO;
@@ -89,12 +89,14 @@ public class AuthController {
         if(owner.isEmpty() && renter.isEmpty()){
             if (body.role().equals("owner")) {
                 this.ownerService.saveOwner(body);
+                Optional<Owner> owner1 = this.ownerService.findOwnerByEmail(body.email());
+                return ResponseEntity.ok().body(owner1);
             } else if(body.role().equals("renter")){
                 this.renterService.saveRenter(body);
             }
-            return ResponseEntity.ok().body(new ResponseDTO(this.tokenService.generateToken(body.email()), body.name(), body.role()));
+            //return ResponseEntity.ok().body(new ResponseDTO(this.tokenService.generateToken(body.email()), body.name(), body.role()));
         }
-        return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("Email já está em uso!");
     }
 }
 //        Optional<User> user = this.userRepository.findByEmail(body.email());

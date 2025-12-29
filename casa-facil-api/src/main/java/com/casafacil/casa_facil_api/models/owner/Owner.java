@@ -1,6 +1,6 @@
-package com.casafacil.casa_facil_api.domain.user;
+package com.casafacil.casa_facil_api.models.owner;
 
-import com.casafacil.casa_facil_api.domain.property.Housing;
+import com.casafacil.casa_facil_api.models.property.Housing;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Entity
 @Data
-public class Renter{
+public class Owner{
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -23,7 +23,7 @@ public class Renter{
 
     private String role;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    private List<Housing> favorites;
+    @OneToMany(mappedBy = "ownerId")
+    private List<Housing> housings;
 
 }

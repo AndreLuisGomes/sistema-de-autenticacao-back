@@ -1,6 +1,6 @@
 package com.casafacil.casa_facil_api.models.owner;
 
-import com.casafacil.casa_facil_api.models.property.Housing;
+import com.casafacil.casa_facil_api.models.housing.Housing;
 import jakarta.persistence.*;
 import lombok.Data;
 

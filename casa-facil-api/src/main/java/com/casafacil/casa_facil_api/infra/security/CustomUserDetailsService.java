@@ -5,6 +5,10 @@ import com.casafacil.casa_facil_api.models.renter.Renter;
 import com.casafacil.casa_facil_api.repositories.OwnerRepository;
 import com.casafacil.casa_facil_api.repositories.RenterRepository;
 import lombok.AllArgsConstructor;
+import org.hibernate.mapping.Array;
+import org.hibernate.mapping.List;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,6 +29,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         Renter renter = this.renterRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found!"));
 
         if(owner.getEmail() != null){
+
             return org.springframework.security.core.userdetails.User.
                     withUsername(owner.getEmail())
                     .password(owner.getPassword())

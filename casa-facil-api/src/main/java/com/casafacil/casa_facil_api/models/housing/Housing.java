@@ -1,8 +1,9 @@
-package com.casafacil.casa_facil_api.models.property;
+package com.casafacil.casa_facil_api.models.housing;
 
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -13,7 +14,11 @@ public class Housing{
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    private String name;
+    private String profileImageUrl;
+
+    private String title;
+
+    private String number;
 
     private String desc;
 
@@ -25,4 +30,6 @@ public class Housing{
     @Embedded
     private Address address;
 
+    @OneToMany(mappedBy = "housing", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private List<HousingImage> housingImageList;
 }

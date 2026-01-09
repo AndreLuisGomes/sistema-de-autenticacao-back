@@ -34,7 +34,7 @@ public class AuthController {
 
         Optional<Renter> renter = this.renterService.findRenterByEmail(body.email());
         if(body.password() == null || body.email() == null){
-            System.out.println("Nulos");
+            System.out.println("Erro: Campo nome ou senha nulos!");
         }
 
         if (renter.isPresent()) {

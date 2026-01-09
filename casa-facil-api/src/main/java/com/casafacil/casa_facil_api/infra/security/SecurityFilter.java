@@ -40,11 +40,11 @@ public class SecurityFilter extends OncePerRequestFilter {
             Renter renter = renterRepository.findByEmail(login).orElseThrow(()-> new RuntimeException("User not found exception"));
 
             if(owner.getEmail() != null){
-                List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+                List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("OWNER"));
                 Authentication authentication = new UsernamePasswordAuthenticationToken(owner, null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }else{
-                List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+                List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("RENTER"));
                 Authentication authentication = new UsernamePasswordAuthenticationToken(renter, null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }

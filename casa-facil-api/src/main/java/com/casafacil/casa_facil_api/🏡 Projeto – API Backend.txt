@@ -1,6 +1,6 @@
-🏡 Casa Fácil – API Backend
+🏡 Projeto – API Backend
 
-API REST desenvolvida para o projeto Casa Fácil, com foco em autenticação, gestão de usuários e operações internas do sistema.
+API REST desenvolvida para o projeto Projeto, com foco em autenticação, gestão de usuários e operações internas do sistema.
 
 🚀 Tecnologias Utilizadas
 

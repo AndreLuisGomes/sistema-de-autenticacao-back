@@ -34,12 +34,14 @@ public class CustomUserDetailsService implements UserDetailsService {
                     withUsername(owner.getEmail())
                     .password(owner.getPassword())
                     .authorities( new ArrayList<>())
+                    .roles(owner.getRole())
                     .build();
         }else {
             return org.springframework.security.core.userdetails.User.
                     withUsername(renter.getEmail())
                     .password(renter.getPassword())
                     .authorities( new ArrayList<>())
+                    .roles(renter.getRole())
                     .build();
         }
     }
